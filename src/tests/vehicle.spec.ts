@@ -22,6 +22,4 @@ describe('VehicleService', () => {
     const vehicle = await service.create(vehicleDto);
     expect(vehicle).toMatchObject(vehicleDto);
   });
-
-  // Additional tests for update, delete, and findById...
 });

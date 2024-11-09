@@ -6,10 +6,12 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { VehicleService } from '../application/services/vehicle.service';
 import { VehicleDto } from '../application/dto/vehicle.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { FindVehicleByDto } from '@application/dto/find-vehicle-by-filters.dto';
 
 @ApiTags('vehicles')
 @Controller('vehicles')
@@ -24,20 +26,20 @@ export class VehicleController {
 
   @ApiOperation({ summary: 'Get all vehicles' })
   @Get()
-  async findAll() {
-    return this.vehicleService.findAll();
+  async findAll(@Query() params: FindVehicleByDto) {
+    return this.vehicleService.findAll(params);
   }
 
   @ApiOperation({ summary: 'Get vehicle by ID' })
   @Get(':id')
-  async findById(@Param('id') id: string) {
+  async findById(@Param('id') id: number) {
     return this.vehicleService.findById(id);
   }
 
   @ApiOperation({ summary: 'Update a vehicle' })
   @Put(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() vehicleDto: Partial<VehicleDto>,
   ) {
     return this.vehicleService.update(id, vehicleDto);
@@ -45,7 +47,7 @@ export class VehicleController {
 
   @ApiOperation({ summary: 'Delete a vehicle' })
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id') id: number) {
     return this.vehicleService.delete(id);
   }
 }

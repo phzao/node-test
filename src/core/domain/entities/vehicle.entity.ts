@@ -1,6 +1,6 @@
 export class Vehicle {
   constructor(
-    public id: string,
+    public id: number,
     public licensePlate: string,
     public chassis: string,
     public renavam: string,
