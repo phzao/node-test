@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { IVehicleRepository } from '@domain/repositories/vehicle.repository.interface';
 import { Vehicle } from '@domain/entities/vehicle.entity';
 import { VehicleDto } from '@application/dto/vehicle.dto';
@@ -13,12 +13,12 @@ export class VehicleService {
     const vehicleLength = vehiclesList.length;
     const vehicle = new Vehicle(
       vehicleLength + 1,
-      vehicleData.licensePlate,
-      vehicleData.chassis,
-      vehicleData.renavam,
-      vehicleData.model,
-      vehicleData.brand,
-      vehicleData.year,
+      vehicleData?.licensePlate,
+      vehicleData?.chassis,
+      vehicleData?.renavam,
+      vehicleData?.model,
+      vehicleData?.brand,
+      vehicleData?.year,
     );
     return this.vehicleRepository.create(vehicle);
   }
@@ -28,14 +28,22 @@ export class VehicleService {
   }
 
   async findById(id: number): Promise<Vehicle | null> {
-    return this.vehicleRepository.findById(id);
+    const vehicle = await this.vehicleRepository.findById(id);
+    if (!vehicle) throw new NotFoundException('Vehicle not found');
+    return vehicle;
   }
 
   async update(id: number, vehicleData: Partial<VehicleDto>): Promise<Vehicle> {
+    const vehicle = await this.findById(id);
+
+    if (!vehicle) throw new NotFoundException('Vehicle not found');
     return this.vehicleRepository.update(id, vehicleData);
   }
 
   async delete(id: number): Promise<void> {
+    const vehicle = await this.vehicleRepository.findById(id);
+    if (!vehicle) throw new NotFoundException('Vehicle not found');
+
     await this.vehicleRepository.delete(id);
   }
 }

@@ -7,6 +7,8 @@ import {
   Param,
   Body,
   Query,
+  HttpCode,
+  ValidationPipe,
 } from '@nestjs/common';
 import { VehicleService } from '../application/services/vehicle.service';
 import { VehicleDto } from '../application/dto/vehicle.dto';
@@ -38,16 +40,19 @@ export class VehicleController {
 
   @ApiOperation({ summary: 'Update a vehicle' })
   @Put(':id')
+  @HttpCode(204)
   async update(
     @Param('id') id: number,
-    @Body() vehicleDto: Partial<VehicleDto>,
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    vehicleDto: Partial<VehicleDto>,
   ) {
     return this.vehicleService.update(id, vehicleDto);
   }
 
   @ApiOperation({ summary: 'Delete a vehicle' })
   @Delete(':id')
-  async delete(@Param('id') id: number) {
-    return this.vehicleService.delete(id);
+  @HttpCode(204)
+  async delete(@Param('id') id: number): Promise<void> {
+    await this.vehicleService.delete(id);
   }
 }
