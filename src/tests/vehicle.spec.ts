@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { VehicleService } from '../application/services/vehicle.service';
 import { MockVehicleRepository } from '../infrastructure/repositories/mock-vehicle.repository';
 
@@ -21,8 +20,8 @@ describe('VehicleService', () => {
       year: 2022,
     };
     const vehicle = await service.create(vehicleDto);
-    expect(vehicle).to.include(vehicleDto);
+    expect(vehicle).toMatchObject(vehicleDto);
   });
 
-  // Outros testes para update, delete, e findById...
+  // Additional tests for update, delete, and findById...
 });
