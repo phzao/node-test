@@ -8,7 +8,6 @@ import {
   Body,
   Query,
   HttpCode,
-  ValidationPipe,
 } from '@nestjs/common';
 import { VehicleService } from '../application/services/vehicle.service';
 import { VehicleDto } from '../application/dto/vehicle.dto';
@@ -43,7 +42,7 @@ export class VehicleController {
   @HttpCode(204)
   async update(
     @Param('id') id: number,
-    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    @Body()
     vehicleDto: Partial<VehicleDto>,
   ) {
     return this.vehicleService.update(id, vehicleDto);
