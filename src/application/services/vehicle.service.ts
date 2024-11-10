@@ -24,7 +24,7 @@ export class VehicleService {
   }
 
   async findAll(params: FindVehicleByDto): Promise<Vehicle[]> {
-    return this.vehicleRepository.findAll(params);
+    return await this.vehicleRepository.findAll(params);
   }
 
   async findById(id: number): Promise<Vehicle | null> {

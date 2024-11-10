@@ -9,35 +9,78 @@ import {
   Query,
   HttpCode,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
+import { FindVehicleByDto } from '@application/dto/find-vehicle-by-filters.dto';
+import { Vehicle } from '@domain/entities/vehicle.entity';
+import { SWAGGER_MESSAGE } from '@helpers/texts/swagger-messages';
 import { VehicleService } from '../application/services/vehicle.service';
 import { VehicleDto } from '../application/dto/vehicle.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { FindVehicleByDto } from '@application/dto/find-vehicle-by-filters.dto';
 
 @ApiTags('vehicles')
 @Controller('vehicles')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
-  @ApiOperation({ summary: 'Create a vehicle' })
+  @ApiOperation({ summary: SWAGGER_MESSAGE.NEW_VEHICLE })
+  @ApiBody({ type: VehicleDto })
+  @ApiResponse({ status: 201, description: SWAGGER_MESSAGE.NEW_VEHICLE_201 })
+  @ApiResponse({ status: 400, description: SWAGGER_MESSAGE.NEW_VEHICLE_400 })
   @Post()
-  async create(@Body() vehicleDto: VehicleDto) {
-    return this.vehicleService.create(vehicleDto);
+  async create(@Body() vehicleDto: VehicleDto): Promise<Vehicle> {
+    return await this.vehicleService.create(vehicleDto);
   }
 
-  @ApiOperation({ summary: 'Get all vehicles' })
+  @ApiOperation({ summary: SWAGGER_MESSAGE.GET_ALL_VEHICLES })
+  @ApiQuery({
+    name: 'brand',
+    required: false,
+    description: SWAGGER_MESSAGE.GET_ALL_VEHICLES_BY_BRAND,
+  })
+  @ApiQuery({
+    name: 'licensePlate',
+    required: false,
+    description: SWAGGER_MESSAGE.GET_ALL_VEHICLES_BY_LICENSE_PLATE,
+  })
+  @ApiQuery({
+    name: 'model',
+    required: false,
+    description: SWAGGER_MESSAGE.GET_ALL_VEHICLES_BY_MODEL,
+  })
+  @ApiQuery({
+    name: 'year',
+    required: false,
+    description: SWAGGER_MESSAGE.GET_ALL_VEHICLES_BY_YEAR,
+  })
+  @ApiResponse({
+    status: 200,
+    description: SWAGGER_MESSAGE.GET_ALL_VEHICLES,
+    type: [VehicleDto],
+  })
+  @ApiResponse({
+    status: 404,
+    description: SWAGGER_MESSAGE.GET_ALL_VEHICLES_404,
+  })
   @Get()
-  async findAll(@Query() params: FindVehicleByDto) {
-    return this.vehicleService.findAll(params);
+  async findAll(@Query() params: FindVehicleByDto): Promise<Vehicle[]> {
+    return await this.vehicleService.findAll(params);
   }
 
-  @ApiOperation({ summary: 'Get vehicle by ID' })
+  @ApiOperation({ summary: SWAGGER_MESSAGE.GET_ONE_VEHICLE })
+  @ApiParam({ name: 'id', description: 'The ID of the vehicle to retrieve' })
+  @ApiResponse({ status: 404, description: 'Vehicle not found.' })
   @Get(':id')
-  async findById(@Param('id') id: number) {
-    return this.vehicleService.findById(id);
+  async findById(@Param('id') id: number): Promise<Vehicle> {
+    return await this.vehicleService.findById(id);
   }
 
-  @ApiOperation({ summary: 'Update a vehicle' })
+  @ApiOperation({ summary: SWAGGER_MESSAGE.UPDATE_VEHICLE })
   @Put(':id')
   @HttpCode(204)
   async update(
@@ -48,7 +91,7 @@ export class VehicleController {
     return this.vehicleService.update(id, vehicleDto);
   }
 
-  @ApiOperation({ summary: 'Delete a vehicle' })
+  @ApiOperation({ summary: SWAGGER_MESSAGE.DELETE_VEHICLE })
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param('id') id: number): Promise<void> {
